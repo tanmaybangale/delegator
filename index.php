@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <link  href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+   <link  href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   
@@ -14,7 +14,7 @@
   
  
  
-  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>       
+  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>       
                
   
         <?php
@@ -62,20 +62,19 @@
 		}
   </script>  
 
-  <style>
-    a:hover, a:focus { text-decoration: none;}
-  </style>
-  
+
 </head>
     
 <body >
+
 	<div id="header" style=" ">
 			<nav class="navbar navbar-default">
-		  <div class="container-fluid" style=" background: linear-gradient(to right, #BCE544, #A8EC46); box-shadow: 8px 8px 4px #aaaaaa;" >
+		  <div class="container-fluid" style=" background: linear-gradient(to right, #F5F3F3, #F5F3F3); box-shadow: 2px 2px 2px #aaaaaa;" >
 			<div class="navbar-header">
 			    
-			    <a class="navbar-brand" href="#">
-				 <span class="glyphicon glyphicon-th-large">  Delegator</span> 
+			    <a class="navbar-brand">
+				 <span class="glyphicon glyphicon-th-large"> <b>Delegator </b></span> 
+				 	
 				</a>
 				
 			</div>
@@ -86,8 +85,6 @@
 			    <script type="text/javascript">
 					var x = getCookie("username");
 					document.write(x); 
-					
-					
 				</script>
 				</a>
 			  </li>
@@ -96,8 +93,27 @@
 		  </div>
 		</nav>
 	</div>
-	<a href="#" >
+	
+	
+	
+	<div name="tabDisplayPanel" style="width: 33%; margin:0 auto; text-align: center;">
+	  
+	  <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+	  <li class="nav-item">
+		<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-expanded="true">Tasks assigned to Others</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-expanded="true">Tasks assigned to Me</a>
+	  </li>
+	  </ul>
 
+	</div>
+	
+	<hr>
+		
+	<div class="tab-content" id="pills-tabContent">
+    
+    
 	 <?php
 					require_once("model/db_config.php");
 					$query = new DBOperations();
@@ -105,17 +121,20 @@
 
 					if ( isset($_COOKIE[$cookie_name]) ) 
 					{
-						echo '						
-						<div  name ="assignedToOthers" style="margin: 0 auto; width:90%;">
-						<h4 class="text-muted">Tasks assigned To Others</h4>
-						<table class="table table-hover table-sm table-bordered nowrap" id="table1">
+						echo '
+						<div class="tab-pane fade active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">	
+						<div class="table1" style="width:95%; margin:0 auto;">
+						
+						<h4 class="text-muted">Tasks assigned To Others</h4><br>
+						<table class="table table-hover order-column nowrap" id="table1">
 								   <thead class="thead-inverse">
 									<tr>
 									  <th class ="col-xs-0">#</th>
-									  <th class ="col-xs-2">To</th>
-									  <th class ="col-xs-4">Work</th>
-									  <th class ="col-xs-1">Status</th>
-									  <th class ="col-xs-4">Comments</th>
+									  <th class ="col-xs-2"><span class="glyphicon glyphicon-time"> </span>  Created On</th>
+									  <th class ="col-xs-2"><span class="glyphicon glyphicon-send"> </span>  To</th>
+									  <th class ="col-xs-3"><span class="glyphicon glyphicon-tasks"> </span>  Work</th>
+									  <th class ="col-xs-1"><span class="glyphicon glyphicon-info-sign"> </span>  Status</th>
+									  <th class ="col-xs-3"><span class="glyphicon glyphicon-comment"> </span>  Comments</th>
 									  <th class ="col-xs-0">  </th>
 									  <th class ="col-xs-0" style="display:none;">  </th>
 									  
@@ -123,7 +142,7 @@
 								  </thead>
 								  ';
 								  
-						$sql = " SELECT t.t_id,s.ul_username ,t.work_description ,t.status , t.comments 
+						$sql = " SELECT t.t_id, s.ul_username ,t.work_description ,t.status , t.comments , t.createdOn
 								from  tb_tasks t inner join tb_userlist f on t.from_id = f.ul_id  
 								inner join tb_userlist s on t.to_id = s.ul_id
 								where f.ul_username = '".$_COOKIE['username']."'";
@@ -133,10 +152,11 @@
 							if ($query->result->num_rows > 0) {
 								// output data of each row
 								$i=1;
-								echo '<tbody>';
+								echo '<tbody bgcolor="#ECFAFF">';
 								while($row = $query->result->fetch_assoc()) {
 									
-								echo "<tr><td>".$i."</td>
+								echo "<tr class='display'><td></td>
+								<td >" .$row['createdOn']. " </td>
 								<td >" .$row['ul_username']. " </td>
 								<td >" .$row['work_description']. "</td>
 								<td >" .$row['status']. "</td> 
@@ -149,23 +169,25 @@
 									
 								echo "</tbody>";  
 							}
-							else {
-								echo " </table>";
-							}		
+								
 						
 						
-						echo '</table> <span id ="addNewTask"><span class="glyphicon glyphicon-plus"></span> Add new task  <span> </div> 
-         
-							<br> <hr> <br> <div name="assignedByMe" style="margin: 0 auto; width:90%;">
-							<h4 class="text-muted">Tasks assigned To Me</h4> 
-						    <table class="table table-hover table-sm table-bordered" id="table2">
-								   <thead class="thead-inverse">
+						echo '</table> <span id ="addNewTask"><span class="glyphicon glyphicon-plus"></span> Add new task  <span> </div> </div>
+							
+							
+							<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" >
+							<div name="table2" style="width:95%; margin:0 auto;">
+							
+							<h4 class="text-muted">Tasks assigned To Me</h4> <br>
+						    <table class="table table-hover order-column nowrap" id="table2" style="width : 100%">
+								   <thead class="thead-inverse" >
 									<tr>
 									  <th class ="col-xs-0">#</th>
-									  <th class ="col-xs-2">From</th>
-									  <th class ="col-xs-4">Work</th>
-									  <th class ="col-xs-1">Status</th>
-									  <th class ="col-xs-4">Comments</th>
+									  <th class ="col-xs-2"><span class="glyphicon glyphicon-time"> </span>  Created On</th>
+									  <th class ="col-xs-2"><span class="glyphicon glyphicon-send"> </span>  From</th>
+									  <th class ="col-xs-3"><span class="glyphicon glyphicon-tasks"> </span>  Work</th>
+									  <th class ="col-xs-1"><span class="glyphicon glyphicon-info-sign"> </span>  Status</th>
+									  <th class ="col-xs-3"><span class="glyphicon glyphicon-comment"> </span>  Comments</th>
 									  <th class ="col-xs-0">  </th>
 									  <th class ="col-xs-0" style="display:none;">  </th>
 									</tr>
@@ -173,7 +195,7 @@
 								  ';
 						
 						
-						$sql = " SELECT t.t_id ,s.ul_username ,t.work_description ,t.status , t.comments 
+						$sql = " SELECT t.t_id ,s.ul_username ,t.work_description ,t.status , t.comments ,t.createdOn
 								from  tb_tasks t inner join tb_userlist f on t.to_id = f.ul_id  
 								inner join tb_userlist s on t.from_id = s.ul_id
 								where f.ul_username = '".$_COOKIE['username']."'";
@@ -182,34 +204,33 @@
 								  
 							if ($query->result->num_rows > 0) {
 								// output data of each row
-								echo '<tbody> <tr>';
 								$i=1;
+								echo '<tbody bgcolor="#ECFAFF">';
 								while($row = $query->result->fetch_assoc()) {
 									
-								echo "<td>".$i."</td> <td>" . 
-											 $row['ul_username']. " </td> <td>".
-											 $row['work_description']. "</td> <td> " . 
-											 $row['status']. "</td> <td>".
-											 $row['comments']."  </td> <td> <span class='glyphicon glyphicon-edit'></span>  </td>
-											 <td style='display:none;'>".$row['t_id']."</td>	
-											 </tr>";
+								echo "<tr class='display'><td></td>
+								<td >" .$row['createdOn']. " </td>
+								<td >" .$row['ul_username']. " </td>
+								<td >" .$row['work_description']. "</td>
+								<td >" .$row['status']. "</td> 
+								<td >" .$row['comments']."  </td>  <td > <span class='glyphicon glyphicon-edit'></span></td>
+								<td style='display:none;'>".$row['t_id']."</td> 
+								</tr> ";
+								
 								$i = $i + 1;				
 									}
 									
-							    echo "</tbody>"; 	
+								echo "</tbody>";  
 							}
-							else {
-								echo "</table>";
-							}
-							
-						echo'</table></div>';				
+														
+						echo'</table> </div> </div>';				
 						}
 						else
 						{
 							echo '   <div>
 							         <img src="images/yoga_dude_final.gif" alt="Do Yoga">
 									 
-							         <script> document.write(" Breath In ,  Breath Out .....In.....Out"); 
+							         <script> document.write(" Works only In INTERNET EXPLORER <BR> Breath In ,  Breath Out .....In.....Out"); 
 									 setTimeout(function () { location.reload(); }, 6000);
 									 </script> 
 									 
@@ -223,9 +244,9 @@
 
 ?>
 
+</div>	
 	
 	
-	</a>
 	<script type="text/javascript">
 	  	
 		$(document).ready(function() {
@@ -241,23 +262,29 @@
         $('#table1').DataTable( {
         "paging":   false,
         "ordering": true,
+		"autoWidth": true,
+		"processing": true,
+		"stateSave": true,
         "info":     false
     } );
 
 	    $('#table2').DataTable( {
         "paging":   false,
         "ordering": true,
+		"autoWidth": true,
+		"processing": true,
+		"stateSave": true,
         "info":     false
     } );
 
 	    
 		
-	   $('#table1').on('click', 'tr', function () {
-        var name = $('td', this).eq(1).text();
-		var work = $('td', this).eq(2).text();
-		var status = $('td', this).eq(3).text();
-		var comments = $('td', this).eq(4).text();
-		var tid = $('td', this).eq(6).text();
+	   $('#table1').on('click', '.display', function () {
+        var name = $('td', this).eq(2).text();
+		var work = $('td', this).eq(3).text();
+		var status = $('td', this).eq(4).text();
+		var comments = $('td', this).eq(5).text();
+		var tid = $('td', this).eq(7).text();
 		
 		
 		
@@ -274,12 +301,12 @@
     });
 	
 	
-		$('#table2').on('click', 'tr', function () {
-        var name = $('td', this).eq(1).text();
-		var work = $('td', this).eq(2).text();
-		var status = $('td', this).eq(3).text();
-		var comments = $('td', this).eq(4).text();
-		var tid = $('td', this).eq(6).text();
+		$('#table2').on('click', '.display', function () {
+        var name = $('td', this).eq(2).text();
+		var work = $('td', this).eq(3).text();
+		var status = $('td', this).eq(4).text();
+		var comments = $('td', this).eq(5).text();
+		var tid = $('td', this).eq(7).text();
 		
 		
 		
